@@ -31,6 +31,7 @@ function getBody() {
             <EQ name='ActivityType' value='Avgang'/>
             <OR>
               <EQ name='LocationSignature' value='Mr'/>
+              <EQ name='LocationSignature' value='Sub'/>
               <EQ name='LocationSignature' value='Tul'/>
             </OR>
         </FILTER>

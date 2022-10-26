@@ -6,29 +6,23 @@
 		return AdvertisedTimeAtLocation?.substring(11, 16);
 	}
 
-	function from(s: string) {
-		switch (s) {
-			case 'Tul':
-				return 'Tullinge';
-			case 'Mr':
-				return 'Märsta';
-			case 'Söc':
-				return 'Södertälje';
-			default:
-				return s;
-		}
-	}
-
-	function to(a: Location[]) {
-		return a?.map(({ LocationName }) => from(LocationName));
+	function name(a: Location[]) {
+		return a?.map(({ LocationName }) => LocationName);
 	}
 </script>
 
 <h1>{data.announcements.length} inställda tåg</h1>
-{#each data.announcements as { AdvertisedTrainIdent, AdvertisedTimeAtLocation, LocationSignature, ToLocation }}
+{#each data.announcements as { AdvertisedTimeAtLocation, FromLocation, LocationSignature, ProductInformation, ToLocation }}
 	<div>
-		{AdvertisedTrainIdent}
-		{hhmm(AdvertisedTimeAtLocation)} från {from(LocationSignature)} till {to(ToLocation)}
+		{ProductInformation.map(({ Description }) => Description)}
+		{name(FromLocation)}-{name(ToLocation)}
+		{hhmm(AdvertisedTimeAtLocation)} från {LocationSignature}
 		är inställt
 	</div>
 {/each}
+
+<style>
+	h1 {
+		font-family: sans-serif;
+	}
+</style>

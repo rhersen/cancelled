@@ -5,6 +5,7 @@ export interface TrainAnnouncement {
 	LocationSignature: string;
 	ProductInformation: Description[];
 	TimeAtLocation: string;
+	FromLocation: Location[];
 	ToLocation: Location[];
 }
 
