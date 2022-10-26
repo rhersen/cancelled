@@ -17,12 +17,17 @@
 	function name(LocationName: string) {
 		return data.locations[LocationName]?.AdvertisedShortLocationName ?? LocationName;
 	}
+
+	function description(ProductInformation) {
+		const description = ProductInformation?.[0]?.Description;
+		return description.startsWith('SL') ? description.substring(3) : description;
+	}
 </script>
 
 <h1>{data.announcements.length} inställda tåg</h1>
 {#each data.announcements as { AdvertisedTimeAtLocation, FromLocation, LocationSignature, ProductInformation, ToLocation }}
 	<div>
-		{ProductInformation.map(({ Description }) => Description)}
+		{description(ProductInformation)}
 		{names(FromLocation)}-{names(ToLocation)}
 		{hhmm(AdvertisedTimeAtLocation)} från {name(LocationSignature)}
 		är inställt
@@ -30,7 +35,8 @@
 {/each}
 
 <style>
-	h1 {
+	h1,
+	div {
 		font-family: sans-serif;
 	}
 </style>
