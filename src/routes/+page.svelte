@@ -1,13 +1,21 @@
 <script type="ts">
 	import type { Location, TrainAnnouncement } from './TrainAnnouncement';
-	export let data: { announcements: TrainAnnouncement[] };
+
+	export let data: {
+		announcements: TrainAnnouncement[];
+		locations: Record<string, { AdvertisedShortLocationName: string }>;
+	};
 
 	function hhmm(AdvertisedTimeAtLocation: string) {
 		return AdvertisedTimeAtLocation?.substring(11, 16);
 	}
 
-	function name(a: Location[]) {
-		return a?.map(({ LocationName }) => LocationName);
+	function names(a: Location[]) {
+		return a?.map(({ LocationName }) => LocationName)?.map(name);
+	}
+
+	function name(LocationName: string) {
+		return data.locations[LocationName]?.AdvertisedShortLocationName ?? LocationName;
 	}
 </script>
 
@@ -15,8 +23,8 @@
 {#each data.announcements as { AdvertisedTimeAtLocation, FromLocation, LocationSignature, ProductInformation, ToLocation }}
 	<div>
 		{ProductInformation.map(({ Description }) => Description)}
-		{name(FromLocation)}-{name(ToLocation)}
-		{hhmm(AdvertisedTimeAtLocation)} från {LocationSignature}
+		{names(FromLocation)}-{names(ToLocation)}
+		{hhmm(AdvertisedTimeAtLocation)} från {name(LocationSignature)}
 		är inställt
 	</div>
 {/each}

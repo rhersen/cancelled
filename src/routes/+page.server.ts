@@ -1,8 +1,8 @@
 import { error } from '@sveltejs/kit';
-import type { TrainAnnouncement } from './TrainAnnouncement';
 
 export async function load() {
-	const response = await fetch('https://api.trafikinfo.trafikverket.se/v2/data.json', {
+	const locationsPromise = fetch('https://trafikverket-locations.netlify.app/geometry.json');
+	const announcementsPromise = fetch('https://api.trafikinfo.trafikverket.se/v2/data.json', {
 		method: 'POST',
 		body: getBody(),
 		headers: {
@@ -11,12 +11,17 @@ export async function load() {
 		}
 	});
 
-	if (!response.ok) throw error(response.status, response.statusText);
+	const locationsResponse = await locationsPromise;
+	const announcementsResponse = await announcementsPromise;
 
-	const data = await response.json();
-	const [body] = data.RESPONSE.RESULT;
-	const announcements: TrainAnnouncement[] = body.TrainAnnouncement;
-	return { announcements };
+	if (!locationsResponse.ok) throw error(locationsResponse.status, locationsResponse.statusText);
+	if (!announcementsResponse.ok)
+		throw error(announcementsResponse.status, announcementsResponse.statusText);
+
+	return {
+		locations: await locationsResponse.json(),
+		announcements: (await announcementsResponse.json()).RESPONSE.RESULT[0].TrainAnnouncement
+	};
 }
 
 function getBody() {
