@@ -1,27 +1,27 @@
 import { error } from '@sveltejs/kit';
 
 export async function load() {
-	const locationsPromise = fetch('https://trafikverket-locations.netlify.app/geometry.json');
-	const announcementsPromise = fetch('https://api.trafikinfo.trafikverket.se/v2/data.json', {
-		method: 'POST',
-		body: getBody(),
-		headers: {
-			'Content-Type': 'application/xml',
-			Accept: 'application/json'
-		}
+	const responses = await Promise.all([
+		fetch('https://trafikverket-locations.netlify.app/geometry.json'),
+		fetch('https://api.trafikinfo.trafikverket.se/v2/data.json', {
+			method: 'POST',
+			body: getBody(),
+			headers: {
+				'Content-Type': 'application/xml',
+				Accept: 'application/json'
+			}
+		})
+	]);
+
+	responses.forEach((response) => {
+		if (!response.ok) throw error(response.status, response.statusText);
 	});
 
-	const locationsResponse = await locationsPromise;
-	const announcementsResponse = await announcementsPromise;
+	const [locations, announcements] = await Promise.all(
+		responses.map((response) => response.json())
+	);
 
-	if (!locationsResponse.ok) throw error(locationsResponse.status, locationsResponse.statusText);
-	if (!announcementsResponse.ok)
-		throw error(announcementsResponse.status, announcementsResponse.statusText);
-
-	return {
-		locations: await locationsResponse.json(),
-		announcements: (await announcementsResponse.json()).RESPONSE.RESULT[0].TrainAnnouncement
-	};
+	return { locations, announcements: announcements.RESPONSE.RESULT[0].TrainAnnouncement };
 }
 
 function getBody() {
