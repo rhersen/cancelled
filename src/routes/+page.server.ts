@@ -1,4 +1,5 @@
 import { error } from '@sveltejs/kit';
+import type { TrainAnnouncement } from './TrainAnnouncement';
 
 export async function load() {
 	const responses = await Promise.all([
@@ -21,7 +22,8 @@ export async function load() {
 		responses.map((response) => response.json())
 	);
 
-	return { locations, announcements: announcements.RESPONSE.RESULT[0].TrainAnnouncement };
+	const result: { TrainAnnouncement: TrainAnnouncement[] }[] = announcements.RESPONSE.RESULT;
+	return { locations, announcements: result.flatMap(({ TrainAnnouncement }) => TrainAnnouncement) };
 }
 
 function getBody() {

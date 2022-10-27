@@ -1,26 +1,25 @@
 <script type="ts">
-	import type { Location, TrainAnnouncement } from './TrainAnnouncement';
+	import type { Description, Location, TrainAnnouncement } from './TrainAnnouncement';
 
 	export let data: {
 		announcements: TrainAnnouncement[];
 		locations: Record<string, { AdvertisedShortLocationName: string }>;
 	};
 
-	function hhmm(AdvertisedTimeAtLocation: string) {
-		return AdvertisedTimeAtLocation?.substring(11, 16);
+	function hhmm(time: string) {
+		return time?.substring(11, 16);
 	}
 
 	function names(a: Location[]) {
 		return a?.map(({ LocationName }) => LocationName)?.map(name);
 	}
 
-	function name(LocationName: string) {
-		return data.locations[LocationName]?.AdvertisedShortLocationName ?? LocationName;
+	function name(signature: string) {
+		return data.locations[signature]?.AdvertisedShortLocationName ?? signature;
 	}
 
-	function description(ProductInformation) {
-		const description = ProductInformation?.[0]?.Description;
-		return description.startsWith('SL') ? description.substring(3) : description;
+	function description([{ Description }]: Description[]) {
+		return Description.startsWith('SL ') ? Description.substring(3) : Description;
 	}
 </script>
 
