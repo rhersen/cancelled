@@ -24,9 +24,10 @@
 </script>
 
 <h1>{data.announcements.length} inställda tåg</h1>
-{#each data.announcements as { AdvertisedTimeAtLocation, FromLocation, LocationSignature, ProductInformation, ToLocation }}
+{#each data.announcements as { AdvertisedTimeAtLocation,AdvertisedTrainIdent, FromLocation, LocationSignature, ProductInformation, ToLocation }}
 	<div>
 		{description(ProductInformation)}
+		{AdvertisedTrainIdent}
 		{names(FromLocation)}-{names(ToLocation)}
 		{hhmm(AdvertisedTimeAtLocation)} från {name(LocationSignature)}
 		är inställt
